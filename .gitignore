@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+
+# Arduino / build systems
+build/
+*.hex
+*.elf
+*.bin
+*.eep
+*.map
+
+
+# VSCode / PlatformIO (if you try it later)
+.vscode/
+.pio/
