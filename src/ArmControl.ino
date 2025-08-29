@@ -18,13 +18,12 @@ const uint8_t PIN_GRIP_BTN = 7;
 // ======= Joint limits and trims =======
 struct Joint {
   uint8_t pin;
-  int minAngle;   // mechanical min
-  int maxAngle;   // mechanical max
-  int centerTrim; // offset applied after mapping
-  int current;    // current written angle
+  int minAngle;
+  int maxAngle;
+  int centerTrim;
+  int current;
 };
 
-// Default conservative limits; tweak later
 Joint base     = {PIN_SERVO_BASE,     10, 170,  0, 90};
 Joint shoulder = {PIN_SERVO_SHOULDER, 15, 165,  0, 90};
 Joint elbow    = {PIN_SERVO_ELBOW,    15, 165,  0, 90};
@@ -33,5 +32,35 @@ Joint gripper  = {PIN_SERVO_GRIPPER,  30, 110,  0, 90};
 
 Servo sBase, sShoulder, sElbow, sWrist, sGripper;
 
-void setup() {}
+void attachAll() {
+  sBase.attach(base.pin);
+  sShoulder.attach(shoulder.pin);
+  sElbow.attach(elbow.pin);
+  sWrist.attach(wrist.pin);
+  sGripper.attach(gripper.pin);
+}
+
+void writeAll() {
+  sBase.write(base.current);
+  sShoulder.write(shoulder.current);
+  sElbow.write(elbow.current);
+  sWrist.write(wrist.current);
+  sGripper.write(gripper.current);
+}
+
+void centerAll() {
+  base.current     = constrain(90 + base.centerTrim,     base.minAngle,     base.maxAngle);
+  shoulder.current = constrain(90 + shoulder.centerTrim, shoulder.minAngle, shoulder.maxAngle);
+  elbow.current    = constrain(90 + elbow.centerTrim,    elbow.minAngle,    elbow.maxAngle);
+  wrist.current    = constrain(90 + wrist.centerTrim,    wrist.minAngle,    wrist.maxAngle);
+  gripper.current  = constrain(90 + gripper.centerTrim,  gripper.minAngle,  gripper.maxAngle);
+  writeAll();
+}
+
+void setup() {
+  attachAll();
+  centerAll();
+  delay(500);
+}
+
 void loop() {}
