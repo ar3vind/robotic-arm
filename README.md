@@ -1,0 +1,1 @@
+This is a my personal project of creating a robotic arm that I learnt and made myself from scratch. I used an uno R3 kit starter kit with different servo motors and parts. 
