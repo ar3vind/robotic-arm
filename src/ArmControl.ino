@@ -82,4 +82,17 @@ void setup() {
   delay(500);
 }
 
-void loop() {}
+
+void loop() {
+  // Read base joystick (X1)
+  int ax0 = analogRead(PIN_JOY_X1);
+
+  // Map to angle and smooth
+  int tBase = mapAnalogToAngle(ax0, base);
+  base.current = applyDeadbandAndFilter(tBase, base.current);
+
+  // Write outputs
+  writeAll();
+
+  delay(15);
+}
