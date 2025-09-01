@@ -32,6 +32,24 @@ Joint gripper  = {PIN_SERVO_GRIPPER,  30, 110,  0, 90};
 
 Servo sBase, sShoulder, sElbow, sWrist, sGripper;
 
+// ======= Control behaviour =======
+const int   DEAD_BAND = 8;    // degrees
+const float ALPHA     = 0.25; // 0..1 low-pass filter factor
+bool        USE_GRIP_POT = true;
+
+int mapAnalogToAngle(int analogValue, const Joint &j) {
+  long a = map(analogValue, 0, 1023, j.minAngle, j.maxAngle);
+  a += j.centerTrim;
+  if (a < j.minAngle) a = j.minAngle;
+  if (a > j.maxAngle) a = j.maxAngle;
+  return (int)a;
+}
+
+int applyDeadbandAndFilter(int target, int current) {
+  if (abs(target - current) < DEAD_BAND) return current;
+  return (int)(ALPHA * target + (1.0 - ALPHA) * current);
+}
+
 void attachAll() {
   sBase.attach(base.pin);
   sShoulder.attach(shoulder.pin);
@@ -58,6 +76,7 @@ void centerAll() {
 }
 
 void setup() {
+  pinMode(PIN_GRIP_BTN, INPUT_PULLUP);
   attachAll();
   centerAll();
   delay(500);
